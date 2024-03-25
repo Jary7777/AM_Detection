@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Model Results</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f7f7f7;
+        }
+        .container {
+            width: 95%;
+            margin-top: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        .graph {
+            margin-bottom: 20px;
+        }
+        .graph img {
+            max-width: 80%; /* Adjust the width as needed */
+            margin-bottom: 20px;
+        }
+        .full-row img {
+            max-width: 60%; /* Adjust for the training loss graph */
+        }
+        .half-row {
+            display: flex;
+            justify-content: space-around;
+        }
+        .half-row img {
+            max-width: 45%; /* Adjust for the ROC and PR curves */
+        }
+        pre {
+            background: #fff;
+            padding: 20px;
+            overflow: auto;
+            border: 1px solid #ddd;
+            text-align: left;
+            font-size: 1em; /* Adjust the font size as needed */
+            width: 80%; /* Adjust the width as needed */
+            margin: 20px auto; /* This will center the classification report */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Training and Testing Results</h1>
+        <div class="full-row graph">
+            <img src="/results/train_loss.png" alt="Training Loss">
+        </div>
+        <div class="graph">
+            <img src="/results/confusion_matrix.png" alt="Confusion Matrix">
+        </div>
+        <div class="half-row">
+            <img src="/results/roc_curve.png" alt="ROC Curve">
+            <img src="/results/pr_curve.png" alt="Precision-Recall Curve">
+        </div>
+        <h2>Classification Report</h2>
+        <pre>{{ report }}</pre>
+    </div>
+</body>
+</html>

@@ -9,3 +9,4 @@
 # ------------------------------
 
 from .SimpleCNN import SimpleCNN
+from .AttentionCNN import AttentionCNN

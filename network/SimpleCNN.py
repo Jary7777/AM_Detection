@@ -32,5 +32,5 @@ class SimpleCNN(nn.Module):
 if __name__ == '__main__':
     start_time = time.time()
     model = SimpleCNN(num_features=470)
-    summary(model=model, input_size=(2000,470), batch_size=32, device="cpu")  # N-C-D-H-W
+    summary(model=model, input_size=(4000,470), batch_size=32, device="cpu")  # N-C-D-H-W
     print("--- %s seconds ---" % (time.time() - start_time))
