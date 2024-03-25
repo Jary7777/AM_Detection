@@ -24,11 +24,14 @@ from tools.Calculation import calculate_metrics, plot_confusion_matrix
 from itertools import cycle
 from src.csv_file_path import csv_file_path
 from sklearn.metrics import classification_report
+import os
 
-
-class train():
+def train():
     def __init__(self):
         super().__init__()
+
+    result_dir = 'result'
+    os.makedirs(result_dir, exist_ok=True)
     print(f'args: {args}')
     train_loader, test_loader, num_features, y_test = dataloader(csv_file_path).load()
     # 模型、定义损失函数和优化器
@@ -75,14 +78,16 @@ class train():
                 best_accuracy = accuracy
             model.train()
 
-    plt.figure(figsize=(10, 6))
+    fig0 = plt.figure(figsize=(10, 6))
     plt.plot(losses, label='Training Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title('Training Loss')
     plt.legend()
     plt.show()
-
+    train_loss_fig_path = os.path.join(result_dir, 'train_loss.png')
+    fig0.savefig(train_loss_fig_path)
+    print(f'损失图已保存到 {train_loss_fig_path}')
     # test
     model.eval()
     y_true = []
@@ -116,6 +121,12 @@ class train():
     Risk_name = {0: 'Advertising software', 1: 'Bank malware', 2: 'SMS malware', 3: 'Risk software', 4: 'Normal '}
     class_names = list(Risk_name.values())
     print(classification_report(y_true, y_pred, target_names=class_names))
+    # 保存分类报告到文本文件
+    report = classification_report(y_true, y_pred, target_names=class_names)
+    report_file_path = os.path.join(result_dir, 'classification_report.txt')
+    with open(report_file_path, 'w') as report_file:
+        report_file.write(report)
+    print(f'分类报告已保存到 {report_file_path}')
     # ----------------------------------------------------------------
     y_test_binarized = label_binarize(y_true, classes=[0, 1, 2, 3, 4])
     n_classes = y_test_binarized.shape[1]
@@ -143,9 +154,12 @@ class train():
         precision[i], recall[i], _ = precision_recall_curve(y_test_binarized[:, i], y_scores[:, i].numpy())
         average_precision[i] = auc(recall[i], precision[i])
 
-    plot_confusion_matrix(cm, class_names=Risk_name.values())
+    cm_fig = plot_confusion_matrix(cm, class_names=Risk_name.values())
+    cm_fig_path = os.path.join(result_dir, 'confusion_matrix.png')
+    cm_fig.savefig(cm_fig_path)
+    print(f'混淆矩阵图已保存到 {cm_fig_path}')
     # ROC曲线
-    plt.figure(figsize=(7, 5))
+    fig1 = plt.figure(figsize=(7, 5))
     colors = cycle(['blue', 'red', 'green', 'cyan', 'yellow'])
     for i, color in zip(range(n_classes), colors):
         plt.plot(fpr[i], tpr[i], color=color, label=f'{Risk_name[i]} (area = {roc_auc[i]:.2f})')
@@ -158,8 +172,12 @@ class train():
     plt.legend(loc="lower right")
     plt.show()
 
+    # 保存ROC曲线图
+    roc_curve_fig_path = os.path.join(result_dir, 'roc_curve.png')
+    fig1.savefig(roc_curve_fig_path)
+    print(f'ROC曲线图已保存到 {roc_curve_fig_path}')
     # P-R曲线
-    plt.figure(figsize=(7, 5))
+    fig2 = plt.figure(figsize=(7, 5))
     for i, color in zip(range(n_classes), colors):
         plt.plot(recall[i], precision[i], color=color,
                  label=f' {Risk_name[i]} ')  #(area = {average_precision[i]:.2f})
@@ -170,6 +188,11 @@ class train():
     plt.title('Precision-Recall curve for each class')
     plt.legend(loc="lower left")
     plt.show()
+    # 保存P-R曲线图
+    pr_curve_fig_path = os.path.join(result_dir, 'pr_curve.png')
+    fig2.savefig(pr_curve_fig_path)
+    print(f'P-R曲线图已保存到 {pr_curve_fig_path}')
+    return 0
 
 if __name__ == '__main__':
     train()
