@@ -17,12 +17,13 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import label_binarize
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from datasets.dataloader import dataloader
-from network import SimpleCNN
+from network import SimpleCNN, AttentionCNN
 from src.args import args
 from src.save_and_load_model import save_model, load_model
-from tools.Calculation import calculate_metrics
+from tools.Calculation import calculate_metrics, plot_confusion_matrix
 from itertools import cycle
 from src.csv_file_path import csv_file_path
+from sklearn.metrics import classification_report
 
 
 class train():
@@ -96,23 +97,25 @@ class train():
             y_pred.extend(predicted.cpu().numpy())
 
     classes = [0, 1, 2, 3, 4]
-    metrics_per_class, macro_avg = calculate_metrics(y_true, y_pred, classes)
+    cm, metrics_per_class, macro_avg = calculate_metrics(y_true, y_pred, classes)
 
-    print("Metrics for each class:")
-    for idx, class_id in enumerate(classes):
-        print(f"Class {class_id}:")
-        print(f"  Precision: {metrics_per_class['precision'][idx]}")
-        print(f"  Recall: {metrics_per_class['recall'][idx]}")
-        print(f"  F1: {metrics_per_class['f1'][idx]}")
-
-    print("\nMacro Average Metrics:")
-    print(f"  Precision: {macro_avg['precision']}")
-    print(f"  Recall: {macro_avg['recall']}")
-    print(f"  F1: {macro_avg['f1']}")
-
-    accuracy = np.sum(np.array(y_true) == np.array(y_pred)) / len(y_true)
-    print(f"\nAccuracy: {accuracy}")
-
+    # print("Metrics for each class:")
+    # for idx, class_id in enumerate(classes):
+    #     print(f"Class {class_id}:")
+    #     print(f"  Precision: {metrics_per_class['precision'][idx]}")
+    #     print(f"  Recall: {metrics_per_class['recall'][idx]}")
+    #     print(f"  F1: {metrics_per_class['f1'][idx]}")
+    #
+    # print("\nMacro Average Metrics:")
+    # print(f"  Precision: {macro_avg['precision']}")
+    # print(f"  Recall: {macro_avg['recall']}")
+    # print(f"  F1: {macro_avg['f1']}")
+    #
+    # accuracy = np.sum(np.array(y_true) == np.array(y_pred)) / len(y_true)
+    # print(f"\nAccuracy: {accuracy}")
+    Risk_name = {0: 'Advertising software', 1: 'Bank malware', 2: 'SMS malware', 3: 'Risk software', 4: 'Normal '}
+    class_names = list(Risk_name.values())
+    print(classification_report(y_true, y_pred, target_names=class_names))
     # ----------------------------------------------------------------
     y_test_binarized = label_binarize(y_true, classes=[0, 1, 2, 3, 4])
     n_classes = y_test_binarized.shape[1]
@@ -140,10 +143,10 @@ class train():
         precision[i], recall[i], _ = precision_recall_curve(y_test_binarized[:, i], y_scores[:, i].numpy())
         average_precision[i] = auc(recall[i], precision[i])
 
+    plot_confusion_matrix(cm, class_names=Risk_name.values())
     # ROC曲线
     plt.figure(figsize=(7, 5))
-    colors = cycle(['blue', 'red', 'green', 'cyan'])
-    Risk_name = {0: 'Advertising software', 1: 'Bank malware', 2: 'SMS malware', 3: 'Risk software', 4: 'Normal '}
+    colors = cycle(['blue', 'red', 'green', 'cyan', 'yellow'])
     for i, color in zip(range(n_classes), colors):
         plt.plot(fpr[i], tpr[i], color=color, label=f'{Risk_name[i]} (area = {roc_auc[i]:.2f})')
     plt.plot([0, 1], [0, 1], 'k--')
@@ -159,7 +162,7 @@ class train():
     plt.figure(figsize=(7, 5))
     for i, color in zip(range(n_classes), colors):
         plt.plot(recall[i], precision[i], color=color,
-                 label=f' {Risk_name[i]} (area = {average_precision[i]:.2f})')
+                 label=f' {Risk_name[i]} ')  #(area = {average_precision[i]:.2f})
     plt.xlabel('Recall')
     plt.ylabel('Precision')
     plt.ylim([0.0, 1.05])
@@ -167,7 +170,6 @@ class train():
     plt.title('Precision-Recall curve for each class')
     plt.legend(loc="lower left")
     plt.show()
-
 
 if __name__ == '__main__':
     train()
