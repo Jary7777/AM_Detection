@@ -2,61 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model Results</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background: #f7f7f7;
+            background: #edf2f7;
+            color: #333;
         }
         .container {
-            width: 95%;
-            margin-top: 20px;
+            max-width: 95%;
+            margin: 2% auto;
             padding: 20px;
-            text-align: center;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .graph {
-            margin-bottom: 20px;
+        .header {
+            background-color: #4a5568;
+            color: #fff;
+            padding: 10px 0;
+            margin-bottom: 30px;
         }
-        .graph img {
-            max-width: 80%; /* Adjust the width as needed */
-            margin-bottom: 20px;
+        h1 {
+            margin: 0;
         }
-        .full-row img {
-            max-width: 60%; /* Adjust for the training loss graph */
-        }
-        .half-row {
+        .graph-container {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-around;
+            align-items: center;
         }
-        .half-row img {
-            max-width: 45%; /* Adjust for the ROC and PR curves */
+        .graph-container div {
+            flex: 0 1 48%;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         pre {
-            background: #fff;
-            padding: 20px;
+            background: #f7fafc;
+            padding: 15px;
             overflow: auto;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.85em;
+            width: auto;
+            margin: 20px 0;
             text-align: left;
-            font-size: 1em; /* Adjust the font size as needed */
-            width: 80%; /* Adjust the width as needed */
-            margin: 20px auto; /* This will center the classification report */
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Training and Testing Results</h1>
-        <div class="full-row graph">
-            <img src="/results/train_loss.png" alt="Training Loss">
+        <div class="header">
+            <h1>Training and Testing Results</h1>
         </div>
-        <div class="graph">
-            <img src="/results/confusion_matrix.png" alt="Confusion Matrix">
+        <div class="graph-container">
+            <div><img src="/results/train_loss.png" alt="Training Loss"></div>
+            <div><img src="/results/confusion_matrix.png" alt="Confusion Matrix"></div>
         </div>
-        <div class="half-row">
-            <img src="/results/roc_curve.png" alt="ROC Curve">
-            <img src="/results/pr_curve.png" alt="Precision-Recall Curve">
+        <div class="graph-container">
+            <div><img src="/results/roc_curve.png" alt="ROC Curve"></div>
+            <div><img src="/results/pr_curve.png" alt="Precision-Recall Curve"></div>
         </div>
         <h2>Classification Report</h2>
         <pre>{{ report }}</pre>

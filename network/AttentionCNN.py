@@ -7,67 +7,45 @@
 # Datetime:2024/3/25 11:06
 # File:AttentionCNN.py
 # ------------------------------
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchsummary import summary
-import time
-
 
 class Attention(nn.Module):
-    def __init__(self, feature_dim, step_dim, bias=True, **kwargs):
-        super(Attention, self).__init__(**kwargs)
-
-        self.feature_dim = feature_dim
-        self.step_dim = step_dim
-        self.bias = bias
-        self.attention = nn.Linear(feature_dim, 1, bias=bias)
+    """ 注意力机制模块 """
+    def __init__(self, in_features):
+        super(Attention, self).__init__()
+        self.attention_weights = nn.Linear(in_features, 1)
 
     def forward(self, x):
-        eij = self.attention(x)
+        weights = F.softmax(self.attention_weights(x), dim=1)
+        weighted_input = x * weights.expand_as(x)
+        return weighted_input, weights
 
-        # 计算注意力权重
-        eij = torch.tanh(eij)
-        a = torch.exp(eij)
-
-        # 归一化注意力权重
-        a = a / torch.sum(a, 1, keepdim=True) + 1e-10
-
-        weighted_input = x * a
-        return torch.sum(weighted_input, 1)
-
-
-class AttentionCNN(nn.Module):
-    def __init__(self, num_features):
-        super(AttentionCNN, self).__init__()
+class AttentionClassifier(nn.Module):
+    """ 带注意力机制的分类器 """
+    def __init__(self, num_features, num_classes):
+        super(AttentionClassifier, self).__init__()
         self.fc1 = nn.Linear(num_features, 256)
         self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, 32)
-        self.fc5 = nn.Linear(32, 5)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.5)
-        self.attention = Attention(feature_dim=64, step_dim=128)
+        self.attention = Attention(128)
+        self.fc3 = nn.Linear(128, num_classes)
 
     def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = self.relu(self.fc3(x))
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        weighted_x, attention_weights = self.attention(x)
+        out = self.fc3(weighted_x)
+        return out, attention_weights
 
-        # x = self.attention(x)
-        #
-        # x = self.dropout(x)
-        x = self.relu(self.fc4(x))
-        x = self.dropout(x)
-        x = self.fc5(x)
-        return x
+# 创建模型实例并测试
+num_features = 470  # 例如，假设我们有 470 个特征
+num_classes = 5     # 假设我们有 5 个分类
+model = AttentionClassifier(num_features, num_classes)
 
+# 假设输入的形状是 [batch_size, num_features]
+inputs = torch.rand(32, num_features)  # 32 是批量大小
+outputs, attention_weights = model(inputs)
 
-if __name__ == '__main__':
-    start_time = time.time()
-    model = AttentionCNN(num_features=470)
-    summary(model=model, input_size=(4000,470), batch_size=32, device="cpu")  # N-C-D-H-W
-    print("--- %s seconds ---" % (time.time() - start_time))
+print("Outputs shape:", outputs.shape)  # 应该是 [32, 5]
+print("Attention weights shape:", attention_weights.shape)  # 应该是 [32, 128]
