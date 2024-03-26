@@ -15,7 +15,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
-
+import joblib
 from sklearn.metrics import accuracy_score, confusion_matrix
 from tools.Calculation import plot_confusion_matrix
 from src.csv_file_path import csv_file_path
@@ -41,7 +41,7 @@ def main():
     # 划分训练集和测试集
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
     # 01. 机器学习算法——随机森林分类
-    #clf = RandomForestClassifier(n_estimators=200, random_state=42)
+    clf = RandomForestClassifier(n_estimators=200, random_state=42)
     # ----------------------------------------------------------------
 
     # 02. 机器学习算法——Support Vector Machines, SVM
@@ -57,7 +57,7 @@ def main():
     # ----------------------------------------------------------------
 
     # 05. 神经网络--多层感知器
-    clf = MLPClassifier(hidden_layer_sizes=(100,), activation='relu', solver='adam', random_state=42)
+    #clf = MLPClassifier(hidden_layer_sizes=(100,), activation='relu', solver='adam', random_state=42)
     clf.fit(X_train, y_train)
     # ----------------------------------------------------------------
     # 测试
@@ -67,7 +67,7 @@ def main():
     print(classification_report(y_test, y_pred, target_names=class_names))
     accuracy = accuracy_score(y_test, y_pred)
     print(f'Accuracy: {accuracy}')
-
+    joblib.dump(clf, 'best_model.joblib')
     # 混淆矩阵
     cm = confusion_matrix(y_test, y_pred)
     plot_confusion_matrix(cm, class_names=Risk_name.values())

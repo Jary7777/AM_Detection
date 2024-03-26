@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import label_binarize
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from datasets.dataloader import dataloader
-from network import SimpleCNN, AttentionCNN
+from network import SimpleCNN, AttentionClassifier
 from src.args import args
 from src.save_and_load_model import save_model, load_model
 from tools.Calculation import calculate_metrics, plot_confusion_matrix
@@ -35,7 +35,7 @@ def train():
     print(f'args: {args}')
     train_loader, test_loader, num_features, y_test = dataloader(csv_file_path).load()
     # 模型、定义损失函数和优化器
-    model = SimpleCNN(num_features=num_features)
+    model = AttentionClassifier(num_features=num_features,num_classes=5)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD([
         {'params': [param for name, param in model.named_parameters() if name[-4:] == 'bias'],
@@ -51,7 +51,7 @@ def train():
         total_loss = 0
         for i, (inputs, labels) in enumerate(train_loader):
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs)[0]
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -66,7 +66,7 @@ def train():
             total = 0
             with torch.no_grad():
                 for inputs, labels in test_loader:
-                    outputs = model(inputs)
+                    outputs = model(inputs)[0]
                     _, predicted = torch.max(outputs.data, 1)
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
@@ -78,7 +78,7 @@ def train():
                 best_accuracy = accuracy
             model.train()
 
-    fig0 = plt.figure(figsize=(10, 6))
+    fig0 = plt.figure(figsize=(10, 8))
     plt.plot(losses, label='Training Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
@@ -92,11 +92,11 @@ def train():
     model.eval()
     y_true = []
     y_pred = []
-    best_model = SimpleCNN(num_features=num_features)
+    best_model = AttentionClassifier(num_features=num_features,num_classes=5)
     load_model(best_model)
     with torch.no_grad():
         for inputs, labels in test_loader:
-            outputs = best_model(inputs)
+            outputs = best_model(inputs)[0]
             _, predicted = torch.max(outputs.data, 1)
             y_true.extend(labels.cpu().numpy())
             y_pred.extend(predicted.cpu().numpy())
@@ -136,7 +136,7 @@ def train():
 
     with torch.no_grad():
         for i, (inputs, _) in enumerate(test_loader):
-            outputs = model(inputs)
+            outputs = model(inputs)[0]
             y_scores[i * test_loader.batch_size:(i + 1) * test_loader.batch_size] = outputs
 
     # ROC、AUC
