@@ -15,3 +15,4 @@
 ![image](https://github.com/Jary7777/AM_Detection/assets/150406848/3c95ae93-e6e0-46ad-b88f-db2170b188b8)
 
 #  Datetime:2024/3/26
+tips：基本功能暂时这样，后面有需要的话可以添加如何从软件中提取特征，构建CSV。但是开题里说的传入某个软件迅速判定的功能，现在只能通过传入某行CSV特征来实现。
