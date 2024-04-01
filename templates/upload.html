@@ -3,49 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <title>Upload CSV File</title>
+    <!-- 引入Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
             background-color: #f7f7f7;
-            text-align: center;
-            padding-top: 50px;
+            height: 100vh; /* 使用100%的视口高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center; /* 使得body的子元素垂直和水平居中 */
         }
-        h1 {
-            color: #333;
+        .custom-header {
+            font-size: 32px;
+            font-weight: bold;
         }
-        form {
-            background-color: #fff;
-            padding: 40px;
-            margin: auto;
-            display: inline-block;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .custom-card {
+            width: 100%;
+            max-width: 600px; /* 设置最大宽度 */
         }
-        input[type=file] {
-            border: 2px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
+        /* 调整上传按钮样式 */
+        .custom-file-input {
             margin-bottom: 20px;
-            width: 220px;
         }
-        input[type=submit] {
-            background-color: #8FAADC;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type=submit]:hover {
-            background-color: #7c9abc;
+        .custom-upload-btn {
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <h1>Upload CSV for Malware Detection</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".csv"><br>
-        <input type="submit" value="Upload">
-    </form>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h1 class="text-center">Upload CSV for Malware Detection</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/upload" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="model_selection">Choose a model:</label>
+                            <select id="model_selection" name="model_selection" class="form-control">
+                                <option value="RandomForest">Random Forest</option>
+                                <option value="SVM">Support Vector Machine</option>
+                                <option value="GaussiaNB">Gaussian Naive Bayes</option>
+                                <option value="NeuralNetwork">Neural Network</option>
+                                <!-- 添加其他模型选项 -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" name="file" accept=".csv" class="form-control-file">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入Bootstrap JS和依赖 -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.9/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

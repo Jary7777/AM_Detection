@@ -41,11 +41,11 @@ def main():
     # 划分训练集和测试集
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
     # 01. 机器学习算法——随机森林分类
-    clf = RandomForestClassifier(n_estimators=200, random_state=42)
+    #clf = RandomForestClassifier(n_estimators=200, random_state=42)
     # ----------------------------------------------------------------
 
     # 02. 机器学习算法——Support Vector Machines, SVM
-    #clf = SVC(kernel='linear', C=1.0, random_state=42)
+    #clf = SVC(kernel='linear', C=1.0, random_state=42, probability=True)
     # ----------------------------------------------------------------
 
     # 03. 机器学习算法——朴素贝叶斯 Naive Bayes
@@ -53,7 +53,7 @@ def main():
     # ----------------------------------------------------------------
 
     # 04. 机器学习算法--K最近相邻
-    #clf = KNeighborsClassifier(n_neighbors=3)
+    clf = KNeighborsClassifier(n_neighbors=3)
     # ----------------------------------------------------------------
 
     # 05. 神经网络--多层感知器
@@ -67,7 +67,7 @@ def main():
     print(classification_report(y_test, y_pred, target_names=class_names))
     accuracy = accuracy_score(y_test, y_pred)
     print(f'Accuracy: {accuracy}')
-    joblib.dump(clf, 'best_model.joblib')
+    joblib.dump(clf, 'best_model_GaussianNB.joblib')
     # 混淆矩阵
     cm = confusion_matrix(y_test, y_pred)
     plot_confusion_matrix(cm, class_names=Risk_name.values())
