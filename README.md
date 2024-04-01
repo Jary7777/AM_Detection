@@ -13,6 +13,10 @@
 #  Datetime:2024/3/26
 #  程序网页化![image](https://github.com/Jary7777/AM_Detection/assets/150406848/07148760-8c7f-4378-b0e9-94fe268010a4)
 ![image](https://github.com/Jary7777/AM_Detection/assets/150406848/3c95ae93-e6e0-46ad-b88f-db2170b188b8)
-
 #  Datetime:2024/3/26
+
+#  Datetime:2024/4/1
+#  系统支持部分机器学习分类器![2](https://github.com/Jary7777/AM_Detection/assets/150406848/d0a0a58a-8486-4ca9-b2e2-cf5825b2e03a)
+
+#  Datetime:2024/4/1
 tips：基本功能暂时这样，后面有需要的话可以添加如何从软件中提取特征，构建CSV。但是开题里说的传入某个软件迅速判定的功能，现在只能通过传入某行CSV特征来实现。
